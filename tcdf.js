@@ -76,7 +76,7 @@ function tcdf(x, a, b, mu, sigma) {
     return y;
 }
 
-function partialZScore(a,b,mu,sigma) {
+function truncatedMeanVar(a,b,mu,sigma) {
     'use strict';
     /* jshint newcap: false */
     var Alpha = (a - mu) / sigma;
@@ -94,35 +94,11 @@ function partialZScore(a,b,mu,sigma) {
     var tVA = (Alpha * phi(Alpha) - Beta * phi(Beta)) / Z;
     var tVB = tMuA * tMuA;
     var tVariance = sigma * sigma * (1 + tVA - tVB);
-    var tSigma = Math.sqrt(tVariance);
-    // console.log(a,b,mu,sigma, ' new ', tMu, tVariance, tSigma);
-    return function (x) {
-        if (x < a || x > b) {
-            return 0;
-        }
-        /* jshint newcap: false */
-        return (x - tMu) / tSigma;
-    };
-}
 
-function zScore(x,a,b,mu,sigma) {
-    'use strict';
-    var len = x.length,
-        fcn,
-        i;
-    var y = [];
-
-    fcn = partialZScore(a, b, mu, sigma);
-    for (i = 0; i < len; i += 1) {
-        if (typeof x[i] === 'number') {
-            y[i] = fcn(x[i]);
-        } else {
-            y[i] = NaN;
-        }
-    }
-    return y;
+    // console.log(a,b,mu,sigma, ' new ', tMu, tVariance);
+    return [tMu, tVariance];
 }
 
 // console.log(tcdf([0.0, 1, 2.2, 5, 10, 15, 22], 0, 22, 5, 3));
-// console.log(zScore([0, 5], 0, 22, 5, 3));
+// console.log(truncatedMeanVar(0, 22, 5, 3));
 // console.log(tcdf([5.313409222051099, 5.313409222051099 - 2.7082698546589663, 5.313409222051099 + 2.7082698546589663], 0, 22, 5, 3));
